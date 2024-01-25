@@ -1,7 +1,3 @@
-# Advanced_React_testing
-
-starting the commit with "Portals"
-
 # Handling portals
 
 portals what it do,, its about rendring the component from hirechrchy in which they load. we load that component in diffrent place in dom
