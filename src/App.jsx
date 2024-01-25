@@ -35,7 +35,7 @@ function AlertMessage({ children, onClose, isOpen }) {
     >
       {children}
     </div>,
-    document.body
+    document.querySelector('#alert-messages')
   )
 }
 
