@@ -1,37 +1,55 @@
-import { addMonths, format } from 'date-fns'
 import { useState } from 'react'
+import {
+  addMonths,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isSameDay,
+  isSameMonth,
+  isToday,
+  startOfMonth,
+  startOfWeek
+} from 'date-fns'
 
-export default function DatePicker({ value, onChange }) {
-  const [isHide, setIsHide] = useState(false)
+export function DatePicker({ value, onChange }) {
+  const [isOpen, setIsOpen] = useState(false)
   return (
     <div className="date-picker-container">
-      <button className="date-picker-button" onClick={() => setIsHide(D => !D)}>
-        {value == null ? 'Select a Date' : format(value, 'MMM Do, yyyy')}
+      <button className="date-picker-button" onClick={() => setIsOpen(o => !o)}>
+        {value == null ? 'Select a Date' : format(value, 'MMM do, yyyy')}
       </button>
-      {isHide && <DatePickerModal onChange={onChange} value={value} />}
+      {isOpen && <DatePickerModal onChange={onChange} value={value} />}
     </div>
   )
 }
 
-function DatePickerModal({ onChange, value }) {
+function DatePickerModal({ value, onChange }) {
   const [visibleMonth, setVisibleMonth] = useState(value || new Date())
 
-  function showPrevMonth() {
-    setVisibleMonth(Month => {
-      return addMonths(Month, -1)
+  const visibleDates = eachDayOfInterval({
+    start: startOfWeek(startOfMonth(visibleMonth)),
+    end: endOfWeek(endOfMonth(visibleMonth))
+  })
+
+  function showPreviousMonth() {
+    setVisibleMonth(currentMonth => {
+      return addMonths(currentMonth, -1)
     })
   }
+
   function showNextMonth() {
-    setVisibleMonth(Month => {
-      return addMonths(Month, +1)
+    setVisibleMonth(currentMonth => {
+      return addMonths(currentMonth, 1)
     })
   }
+
   return (
     <div className="date-picker">
       <div className="date-picker-header">
         <button
-          onClick={showPrevMonth}
           className="prev-month-button month-button"
+          onClick={showPreviousMonth}
         >
           &larr;
         </button>
@@ -39,8 +57,8 @@ function DatePickerModal({ onChange, value }) {
           {format(visibleMonth, 'MMMM - yyyy')}
         </div>
         <button
-          onClick={showNextMonth}
           className="next-month-button month-button"
+          onClick={showNextMonth}
         >
           &rarr;
         </button>
@@ -55,41 +73,19 @@ function DatePickerModal({ onChange, value }) {
         <div>Sat</div>
       </div>
       <div className="date-picker-grid-dates date-picker-grid">
-        <button className="date date-picker-other-month-date">28</button>
-        <button className="date date-picker-other-month-date">29</button>
-        <button className="date date-picker-other-month-date">30</button>
-        <button className="date date-picker-other-month-date">31</button>
-        <button className="date">1</button>
-        <button className="date">2</button>
-        <button className="date">3</button>
-        <button className="date">4</button>
-        <button className="date">5</button>
-        <button className="date">6</button>
-        <button className="date">7</button>
-        <button className="date">8</button>
-        <button className="date">9</button>
-        <button className="date">10</button>
-        <button className="date">11</button>
-        <button className="date">12</button>
-        <button className="date">13</button>
-        <button className="date">14</button>
-        <button className="date">15</button>
-        <button className="date">16</button>
-        <button className="date">17</button>
-        <button className="date">18</button>
-        <button className="date">19</button>
-        <button className="date">20</button>
-        <button className="date">21</button>
-        <button className="date">22</button>
-        <button className="date">23</button>
-        <button className="date">24</button>
-        <button className="date">25</button>
-        <button className="date selected">26</button>
-        <button className="date">27</button>
-        <button className="date">28</button>
-        <button className="date today">29</button>
-        <button className="date">30</button>
-        <button className="date date-picker-other-month-date">1</button>
+        {visibleDates.map(date => (
+          <button
+            onClick={() => onChange(date)}
+            className={`date ${
+              !isSameMonth(date, visibleMonth) && 'date-picker-other-month-date'
+            } ${isSameDay(date, value) && 'selected'} ${
+              isToday(date) && 'today'
+            }`}
+            key={date.toDateString()}
+          >
+            {date.getDate()}
+          </button>
+        ))}
       </div>
     </div>
   )
