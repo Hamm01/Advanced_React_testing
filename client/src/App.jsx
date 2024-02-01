@@ -1,11 +1,12 @@
 import { Child } from './Child'
-import styles from './App.module.css'
+import styled from 'styled-components'
 export default function App() {
+  const RedHone = styled.h1`
+    color: red;
+  `
   return (
     <>
-      <h1 className={`${styles.header} ${styles['header-lighter']}`}>
-        App Div
-      </h1>
+      <RedHone>App Div </RedHone>
       <Child />
     </>
   )

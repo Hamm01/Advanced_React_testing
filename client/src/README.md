@@ -1,21 +1,17 @@
-## How to Write CSS Modules.
+## How to Css in js file
 
-When we need to write to css more towards indivual componentized way
-then we can choose the Module Css way to import the css
+we use one library called npm i styled-components
 
-here below
+we need to import this
+import styled from 'styled-components'
 
-import styles from './App.module.css'
+and then we can created tags inside our components so we can write the css for that
 
-and this styles.header class will be used in App component
-
-2.  we can differnt class using this
-    we have a class name header-lighter in App.module.css . so we can use below
-
-<h1 className={`${styles.header} ${styles['header-lighter']}`}>
-
-or we can make class name headerLighter in App.module.css and then use
-
-<h1 className={`${styles.header} ${styles.headerLighter}`}>
-
-Both above are same
+const RedHone = styled.h1`    color: red;
+ `
+return (
+<>
+<RedHone>App Div </RedHone>
+<Child />
+</>
+)

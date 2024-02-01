@@ -1,4 +1,8 @@
-import styles from './Child.module.css'
+import styled from 'styled-components'
+
 export function Child() {
-  return <h1 className={styles.header}>Child Div</h1>
+  const Blueone = styled.h1`
+    color: blue;
+  `
+  return <Blueone>Child Div</Blueone>
 }
