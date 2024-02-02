@@ -11,7 +11,9 @@ function Component({ name, age }) {
 
 Component.propTypes = {
   name: PropTypes.string,
-  age: PropTypes.number
+  age: PropTypes.number.isRequired
 }
 
+// All the propType properties are optional by default, we need to explicitly write isRequired tag if something must be need to pass
+// in props
 export default Component
