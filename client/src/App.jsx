@@ -1,13 +1,9 @@
-import { Child } from './Child'
-import styled from 'styled-components'
+import Component from './Component'
+
 export default function App() {
-  const RedHone = styled.h1`
-    color: red;
-  `
   return (
     <>
-      <RedHone>App Div </RedHone>
-      <Child />
+      <Component name="Sally" age="15" />
     </>
   )
 }

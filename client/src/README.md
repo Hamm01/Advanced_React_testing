@@ -1,17 +1,9 @@
-## How to Css in js file
+## How to use Prop Types Libarary
 
-we use one library called npm i styled-components
+when passing the props to components we need to check.
 
-we need to import this
-import styled from 'styled-components'
+ever wanted to add type safety to your React projects
 
-and then we can created tags inside our components so we can write the css for that
+npm i prop-types
 
-const RedHone = styled.h1`    color: red;
- `
-return (
-<>
-<RedHone>App Div </RedHone>
-<Child />
-</>
-)
+used in component, to check the typesafety, it will provide warning in console when wrong value for props are used
