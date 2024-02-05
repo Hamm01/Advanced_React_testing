@@ -1,14 +1,12 @@
-import { Child } from "./Child"
+import Calendar from "./components/Calendar"
 
-
+Calendar
 function App() {
 
   return (
     <>
-      <h1>Typescript initialization</h1>
-      <Child>
-        <div> Child using children prop</div>
-      </Child>
+      <Calendar />
+
     </>)
 }
 
