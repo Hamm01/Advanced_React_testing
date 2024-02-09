@@ -3,6 +3,7 @@ import { startOfWeek, startOfMonth, endOfWeek, endOfMonth, eachDayOfInterval, is
 import { useMemo, useState } from "react"
 import { formatDate } from "../utils/formatDate"
 import { cc } from "../utils/cc"
+import { useEvents } from "../context/useEvents"
 
 export default function Calendar() {
     const [selectedMonth, setSelectedMonth] = useState(new Date())
@@ -44,6 +45,7 @@ type CalendarDayProps = {
 }
 
 function CalendarDay({ day, showWeekName, selectedMonth }: CalendarDayProps) {
+    const { addEvent } = useEvents()
     return (
         <div className={cc("day", !isSameMonth(day, selectedMonth) && "non-month-day", isBefore(endOfDay(day), new Date()) && "old-month-day")}>
             <div className="day-header">
@@ -68,4 +70,7 @@ function CalendarDay({ day, showWeekName, selectedMonth }: CalendarDayProps) {
             </div> */}
         </div>
     )
+}
+
+function EvenFormModal() {
 }
