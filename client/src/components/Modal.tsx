@@ -14,10 +14,10 @@ export default function Modal({ children, isOpen, onClose }: ModalProps) {
             if (e.key === "Escape") {
                 onClose()
             }
-
-            document.addEventListener("keydown", handler)
-            return () => { document.removeEventListener("keydown", handler) }
         }
+        document.addEventListener("keydown", handler)
+        return () => { document.removeEventListener("keydown", handler) }
+
     }, [onClose])
     if (!isOpen) return null
 
