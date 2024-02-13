@@ -32,6 +32,7 @@ export function EventsProvider({ children }: EventsProviderProps) {
 
     function addEvent(event: UnionOmit<Event, "id">) {
         setEvents(e => [...e, { ...event, id: crypto.randomUUID() }])
+
     }
     return <Context.Provider value={{ events, addEvent }}>{children}</Context.Provider>
 }

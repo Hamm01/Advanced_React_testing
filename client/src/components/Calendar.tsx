@@ -1,6 +1,6 @@
 
 import { startOfWeek, startOfMonth, endOfWeek, endOfMonth, eachDayOfInterval, isSameMonth, isBefore, endOfDay, isToday, subMonths, addMonths } from "date-fns"
-import { Fragment, useId, useMemo, useState } from "react"
+import { FormEvent, Fragment, useId, useMemo, useRef, useState } from "react"
 import { formatDate } from "../utils/formatDate"
 import { cc } from "../utils/cc"
 import { EVENT_COLORS, useEvents } from "../context/useEvents"
@@ -96,7 +96,41 @@ function EvenFormModal({ onSubmit, onDelete, event, date, ...modalProps }: Event
     const [selectedColor, setSelectedColor] = useState(event?.color || EVENT_COLORS[0])
     const [isAllDayChecked, setIsAllDayChecked] = useState(event?.allDay || false)
     const [startTime, setStartTime] = useState(event?.startTime || "")
+    const nameRef = useRef<HTMLInputElement>(null)
+    const endTimeRef = useRef<HTMLInputElement>(null)
 
+    function handleSubmit(e: FormEvent) {
+        e.preventDefault()
+
+        const name = nameRef.current?.value
+        const endTime = endTimeRef.current?.value
+        if (name == null || name === "") { return }
+        const commonProps = {
+            name,
+            date: date || event?.date,
+            color: selectedColor
+        }
+        let newEvent: UnionOmit<Event, "id">
+
+        if (isAllDayChecked) {
+            newEvent = {
+                ...commonProps,
+                allDay: true,
+            }
+        } else {
+            if (startTime == null || startTime === "" || endTime == null || endTime === "") {
+                return
+            }
+            newEvent = {
+                ...commonProps,
+                allDay: false,
+                startTime,
+                endTime
+            }
+        }
+        modalProps.onClose()
+        onSubmit(newEvent)
+    }
 
     return <Modal {...modalProps}>
         <div className="modal-title">
@@ -104,10 +138,10 @@ function EvenFormModal({ onSubmit, onDelete, event, date, ...modalProps }: Event
             <small>{formatDate(date || event.date, { dateStyle: "short" })}</small>
             <button className="close-btn" onClick={() => modalProps.onClose()}>&times;</button>
         </div>
-        <form>
+        <form onSubmit={handleSubmit}>
             <div className="form-group">
                 <label htmlFor={`${formId}-name`}>Name</label>
-                <input required type="text" id={`${formId}-name`} />
+                <input required ref={nameRef} type="text" id={`${formId}-name`} />
             </div>
             <div className="form-group checkbox">
                 <input type="checkbox" checked={isAllDayChecked} onChange={(e) => setIsAllDayChecked(e.target.checked)} name="all-day" id={`${formId}-all-day`} />
@@ -120,7 +154,7 @@ function EvenFormModal({ onSubmit, onDelete, event, date, ...modalProps }: Event
                 </div>
                 <div className="form-group">
                     <label htmlFor={`${formId}-end-time`}>End Time</label>
-                    <input min={startTime} required={!isAllDayChecked} disabled={isAllDayChecked} type="time" id={`${formId}-end-time`} />
+                    <input ref={endTimeRef} min={startTime} required={!isAllDayChecked} disabled={isAllDayChecked} type="time" id={`${formId}-end-time`} />
                 </div>
             </div>
             <div className="form-group">
