@@ -1,5 +1,5 @@
 
-import { startOfWeek, startOfMonth, endOfWeek, endOfMonth, eachDayOfInterval, isSameMonth, isBefore, endOfDay, isToday, subMonths, addMonths } from "date-fns"
+import { startOfWeek, startOfMonth, endOfWeek, endOfMonth, eachDayOfInterval, isSameMonth, isBefore, endOfDay, isToday, subMonths, addMonths, isSameDay } from "date-fns"
 import { FormEvent, Fragment, useId, useMemo, useRef, useState } from "react"
 import { formatDate } from "../utils/formatDate"
 import { cc } from "../utils/cc"
@@ -17,7 +17,7 @@ export default function Calendar() {
         const lastWeekEnd = endOfWeek(endOfMonth(selectedMonth))
         return eachDayOfInterval({ start: firstWeekStart, end: lastWeekEnd })
     }, [selectedMonth])
-
+    const { events } = useEvents()
     return (
         <div className="calendar">
             <div className="header">
@@ -30,7 +30,7 @@ export default function Calendar() {
             </div>
             <div className="days">
                 {calendarDays.map((day, index) => (
-                    <CalendarDay key={day.getTime()} day={day} showWeekName={index < 7} selectedMonth={selectedMonth} />
+                    <CalendarDay key={day.getTime()} events={events.filter(event => isSameDay(day, event.date))} day={day} showWeekName={index < 7} selectedMonth={selectedMonth} />
                 ))}
 
 
@@ -44,12 +44,15 @@ type CalendarDayProps = {
     day: Date
     showWeekName: boolean
     selectedMonth: Date
-
+    events: Event[]
 }
 
-function CalendarDay({ day, showWeekName, selectedMonth }: CalendarDayProps) {
+function CalendarDay({ day, showWeekName, selectedMonth, events }: CalendarDayProps) {
     const [isNewEventModalOpen, setIsNewEventModalOpen] = useState(false)
     const { addEvent } = useEvents()
+    const sortedEvents = useMemo(() => {
+
+    }, [events])
     return (
         <div className={cc("day", !isSameMonth(day, selectedMonth) && "non-month-day", isBefore(endOfDay(day), new Date()) && "old-month-day")}>
             <div className="day-header">
@@ -57,21 +60,24 @@ function CalendarDay({ day, showWeekName, selectedMonth }: CalendarDayProps) {
                 <div className={cc("day-number", isToday(day) && "today")}>{formatDate(day, { day: "numeric" })}</div>
                 <button className="add-event-btn" onClick={() => setIsNewEventModalOpen(true)}>+</button>
             </div>
-            {/* <div className="events">
-                <button className="all-day-event blue event">
-                    <div className="event-name">Short</div>
-                </button>
-                <button className="all-day-event green event">
-                    <div className="event-name">
-                        Long Event Name That Just Keeps Going
-                    </div>
-                </button>
-                <button className="event">
-                    <div className="color-dot blue"></div>
-                    <div className="event-time">7am</div>
-                    <div className="event-name">Event Name</div>
-                </button>
-            </div> */}
+            {events.length > 0 && (
+                <div className="events">
+                    <button className="all-day-event blue event">
+                        <div className="event-name">Short</div>
+                    </button>
+                    <button className="all-day-event green event">
+                        <div className="event-name">
+                            Long Event Name That Just Keeps Going
+                        </div>
+                    </button>
+                    <button className="event">
+                        <div className="color-dot blue"></div>
+                        <div className="event-time">7am</div>
+                        <div className="event-name">Event Name</div>
+                    </button>
+                </div>
+            )}
+
             {isNewEventModalOpen && <EvenFormModal date={day} isOpen={isNewEventModalOpen} onClose={() => setIsNewEventModalOpen(false)} onSubmit={addEvent} />}
         </div>
     )
