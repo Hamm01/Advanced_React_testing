@@ -1,5 +1,5 @@
 
-import { startOfWeek, startOfMonth, endOfWeek, endOfMonth, eachDayOfInterval, isSameMonth, isBefore, endOfDay, isToday, subMonths, addMonths, isSameDay } from "date-fns"
+import { startOfWeek, startOfMonth, endOfWeek, endOfMonth, eachDayOfInterval, isSameMonth, isBefore, endOfDay, isToday, subMonths, addMonths, isSameDay, parse } from "date-fns"
 import { FormEvent, Fragment, useId, useMemo, useRef, useState } from "react"
 import { formatDate } from "../utils/formatDate"
 import { cc } from "../utils/cc"
@@ -51,7 +51,21 @@ function CalendarDay({ day, showWeekName, selectedMonth, events }: CalendarDayPr
     const [isNewEventModalOpen, setIsNewEventModalOpen] = useState(false)
     const { addEvent } = useEvents()
     const sortedEvents = useMemo(() => {
+        const timetoNumber = (time: string) => parseFloat(time.replace(":", "."))
+        return [...events].sort((a, b) => {
+            if (a.allDay && b.allDay) {
+                return 0
+            }
+            else if (a.allDay) {
+                return -1
+            } else if (b.allDay) {
+                return 1
+            } else {
+                return timetoNumber(a.startTime) - timetoNumber(b.startTime)
+            }
 
+
+        })
     }, [events])
     return (
         <div className={cc("day", !isSameMonth(day, selectedMonth) && "non-month-day", isBefore(endOfDay(day), new Date()) && "old-month-day")}>
@@ -60,21 +74,11 @@ function CalendarDay({ day, showWeekName, selectedMonth, events }: CalendarDayPr
                 <div className={cc("day-number", isToday(day) && "today")}>{formatDate(day, { day: "numeric" })}</div>
                 <button className="add-event-btn" onClick={() => setIsNewEventModalOpen(true)}>+</button>
             </div>
-            {events.length > 0 && (
+            {sortedEvents.length > 0 && (
                 <div className="events">
-                    <button className="all-day-event blue event">
-                        <div className="event-name">Short</div>
-                    </button>
-                    <button className="all-day-event green event">
-                        <div className="event-name">
-                            Long Event Name That Just Keeps Going
-                        </div>
-                    </button>
-                    <button className="event">
-                        <div className="color-dot blue"></div>
-                        <div className="event-time">7am</div>
-                        <div className="event-name">Event Name</div>
-                    </button>
+                    {sortedEvents.map(event => (
+                        <CalendarEvent key={event.id} event={event} />
+                    ))}
                 </div>
             )}
 
@@ -82,6 +86,31 @@ function CalendarDay({ day, showWeekName, selectedMonth, events }: CalendarDayPr
         </div>
     )
 }
+function CalendarEvent({ event }: { event: Event }) {
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    if (event.startTime) {
+
+        console.log(parse(event.startTime, "HH:mm", event.date))
+    }
+    return <>
+        <button className={cc("event", event.color, event.allDay && 'all-day-event')}>
+            {event.allDay ? (
+                <div className="event-name">{event.name}</div>
+
+            ) : (
+                <>
+                    <div className={`color-dot ${event.color}`}></div>
+
+                    <div className="event-time">{formatDate(parse(event.startTime, "HH:mm", event.date), {
+                        timeStyle: "short",
+                    })}</div>
+                    <div className="event-name">{event.name}</div>
+                </>
+            )}
+        </button>
+        <EvenFormModal event={event} isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onSubmit={updateEvent} /></>
+}
+
 
 type EventFormModalPRops = {
     onSubmit: (event: UnionOmit<Event, "id">) => void
