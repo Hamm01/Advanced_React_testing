@@ -88,12 +88,10 @@ function CalendarDay({ day, showWeekName, selectedMonth, events }: CalendarDayPr
 }
 function CalendarEvent({ event }: { event: Event }) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-    if (event.startTime) {
+    const { updateEvent, deleteEvent } = useEvents()
 
-        console.log(parse(event.startTime, "HH:mm", event.date))
-    }
     return <>
-        <button className={cc("event", event.color, event.allDay && 'all-day-event')}>
+        <button onClick={() => setIsEditModalOpen(true)} className={cc("event", event.color, event.allDay && 'all-day-event')} >
             {event.allDay ? (
                 <div className="event-name">{event.name}</div>
 
@@ -108,7 +106,7 @@ function CalendarEvent({ event }: { event: Event }) {
                 </>
             )}
         </button>
-        <EvenFormModal event={event} isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onSubmit={updateEvent} /></>
+        <EvenFormModal event={event} isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onSubmit={e => updateEvent(event.id, e)} onDelete={() => deleteEvent(event.id)} /></>
 }
 
 
@@ -176,7 +174,7 @@ function EvenFormModal({ onSubmit, onDelete, event, date, ...modalProps }: Event
         <form onSubmit={handleSubmit}>
             <div className="form-group">
                 <label htmlFor={`${formId}-name`}>Name</label>
-                <input required ref={nameRef} type="text" id={`${formId}-name`} />
+                <input required defaultValue={event?.name} ref={nameRef} type="text" id={`${formId}-name`} />
             </div>
             <div className="form-group checkbox">
                 <input type="checkbox" checked={isAllDayChecked} onChange={(e) => setIsAllDayChecked(e.target.checked)} name="all-day" id={`${formId}-all-day`} />
@@ -189,7 +187,7 @@ function EvenFormModal({ onSubmit, onDelete, event, date, ...modalProps }: Event
                 </div>
                 <div className="form-group">
                     <label htmlFor={`${formId}-end-time`}>End Time</label>
-                    <input ref={endTimeRef} min={startTime} required={!isAllDayChecked} disabled={isAllDayChecked} type="time" id={`${formId}-end-time`} />
+                    <input ref={endTimeRef} defaultValue={event?.endTime} min={startTime} required={!isAllDayChecked} disabled={isAllDayChecked} type="time" id={`${formId}-end-time`} />
                 </div>
             </div>
             <div className="form-group">
