@@ -25,7 +25,7 @@ export default function Modal({ children, isOpen, onClose }: ModalProps) {
         if (!isOpen && prevIsOpen.current) {
             setIsClosing(true)
         }
-        console.log("cater")
+
         prevIsOpen.current = isOpen
     }, [isOpen])
 
@@ -34,13 +34,9 @@ export default function Modal({ children, isOpen, onClose }: ModalProps) {
     return (
         createPortal(<div onAnimationEnd={() => setIsClosing(false)} className={cc("modal", isClosing && "closing")}>
             <div className="overlay" onClick={onClose} />
-            <StaterCall />
+
             <div className="modal-body">{children}</div>
         </div>, document.querySelector("#modal-container") as HTMLElement)
     )
 }
 
-function StaterCall() {
-    console.log("pillar")
-    return <div></div>
-}
