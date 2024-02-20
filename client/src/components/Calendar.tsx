@@ -50,6 +50,7 @@ type CalendarDayProps = {
 
 function CalendarDay({ day, showWeekName, selectedMonth, events }: CalendarDayProps) {
     const [isNewEventModalOpen, setIsNewEventModalOpen] = useState(false)
+    const [isViewMoreEventModalOpen, setisViewMoreEventModalOpen] = useState(false)
     const { addEvent } = useEvents()
     const sortedEvents = useMemo(() => {
         const timetoNumber = (time: string) => parseFloat(time.replace(":", "."))
@@ -77,13 +78,37 @@ function CalendarDay({ day, showWeekName, selectedMonth, events }: CalendarDayPr
             </div>
             {sortedEvents.length > 0 && (
 
-                <OverflowContainer className="events" items={sortedEvents} getKey={event => event.id} renderItem={event => <CalendarEvent event={event} />} renderOverflow={amount => <button className="events-view-more-btn">+{amount} More</button>} />
+                <OverflowContainer className="events" items={sortedEvents} getKey={event => event.id} renderItem={event => <CalendarEvent event={event} />} renderOverflow={amount => (
+                    <>
+                        <button onClick={() => setisViewMoreEventModalOpen(true)} className="events-view-more-btn">+{amount} More</button>
+                        <ViewMoreCalendarEventsModal events={sortedEvents} isOpen={isViewMoreEventModalOpen} onClose={() => setisViewMoreEventModalOpen(false)} />
+                    </>
+                )} />
 
             )}
 
             {isNewEventModalOpen && <EvenFormModal date={day} isOpen={isNewEventModalOpen} onClose={() => setIsNewEventModalOpen(false)} onSubmit={addEvent} />}
         </div>
     )
+}
+type ViewMoreCalendarEventsModalProps = {
+    events: Event[]
+} & Omit<ModalProps, "children">
+function ViewMoreCalendarEventsModal({ events, ...modalProps }: ViewMoreCalendarEventsModalProps) {
+
+    if (events.length == 0) return null
+    return <Modal {...modalProps}>
+        <div className="modal-title">
+
+            <small>{formatDate(events[0].date, { dateStyle: "short" })}</small>
+            <button className="close-btn" onClick={() => modalProps.onClose()}>&times;</button>
+        </div>
+        <div className="events">
+            {events.map(event => (
+                <CalendarEvent event={event} key={event.id} />
+            ))}
+        </div>
+    </Modal>
 }
 function CalendarEvent({ event }: { event: Event }) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
