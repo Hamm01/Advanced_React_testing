@@ -1,11 +1,12 @@
 import { useState, memo } from 'react'
 
-function Component({ initialCount }: { initialCount: number }) {
+function Component({ initialCount, otherProp }: { initialCount: number, otherProp: string }) {
     const [value, setValue] = useState(initialCount)
 
 
     return (
         <>
+            {otherProp}
             <button onClick={() => setValue(v => v + 1)}>+</button>
             {value}
             <button onClick={() => setValue(v => v - 1)}>-</button>
@@ -14,5 +15,5 @@ function Component({ initialCount }: { initialCount: number }) {
 }
 
 export const Counter = memo(Component, (prevProps, newProps) => {
-    return false
+    return prevProps.otherProp === newProps.otherProp
 })

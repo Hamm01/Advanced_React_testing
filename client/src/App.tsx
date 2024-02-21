@@ -7,7 +7,7 @@ function App() {
   return <>
     <input value={name} onChange={e => setName(e.target.value)} type="text" />
     <br />
-    <Counter initialCount={0} />
+    <Counter initialCount={0} otherProp="easy" />
   </>
 }
 
