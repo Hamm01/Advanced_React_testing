@@ -13,4 +13,6 @@ function Component({ initialCount }: { initialCount: number }) {
     )
 }
 
-export const Counter = memo(Component)
+export const Counter = memo(Component, (prevProps, newProps) => {
+    return false
+})
