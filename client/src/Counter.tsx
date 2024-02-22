@@ -1,19 +1,22 @@
-import { useState, memo } from 'react'
+import { PureComponent } from 'react'
 
-function Component({ initialCount, otherProp }: { initialCount: number, otherProp: string }) {
-    const [value, setValue] = useState(initialCount)
+export class Counter extends PureComponent {
+    constructor(props) {
+        super(props)
+        this.state = { count: props.initialCount }
+    }
+    render() {
+        return (
+            <>
+                <button onClick={() => this.setState(state => {
+                    return { count: state.count - 1 }
+                })}>-</button>
+                {this.state.count}
+                <button onClick={() => this.setState(state => {
+                    return { count: state.count + 1 }
+                })}>+</button>
+            </>
+        )
+    }
 
-
-    return (
-        <>
-            {otherProp}
-            <button onClick={() => setValue(v => v + 1)}>+</button>
-            {value}
-            <button onClick={() => setValue(v => v - 1)}>-</button>
-        </>
-    )
 }
-
-export const Counter = memo(Component, (prevProps, newProps) => {
-    return prevProps.otherProp === newProps.otherProp
-})
