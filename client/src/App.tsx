@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Counter } from "./Counter"
+import { List } from "./List"
 
 function App() {
   const [name, setName] = useState("")
@@ -7,7 +7,7 @@ function App() {
   return <>
     <input value={name} onChange={e => setName(e.target.value)} type="text" />
     <br />
-    <Counter initialCount={0} otherProp="easy" />
+    <List />
   </>
 }
 
